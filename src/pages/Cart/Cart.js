@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import PanierUI from "./PanierUI";
+import CartUI from "./CartUI";
 import API from "../../services/api";
 
-function Panier() {
-  const [panier, setPanier] = useState(null);
+function Cart() {
+  const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Charger les articles du panier de l'utilisateur connecté
+  // Charger le panier de l'utilisateur connecté
   useEffect(() => {
     API.get("/api/panier/")
       .then(res => {
-        setPanier(res.data);
+        setCart(res.data);
         setLoading(false);
       })
       .catch(err => {
@@ -20,10 +20,11 @@ function Panier() {
       });
   }, []);
 
+  // Retirer un article du panier
   const handleRemoveItem = async (annonceId) => {
     try {
       await API.delete(`/api/panier/supprimer/${annonceId}/`);
-      setPanier(prev => ({
+      setCart(prev => ({
         ...prev,
         articles: prev.articles.filter(a => a.id !== annonceId)
       }));
@@ -33,26 +34,27 @@ function Panier() {
     }
   };
 
-  const handleConfirmAchat = async () => {
+  // Confirmer l'achat du panier
+  const handleConfirmPurchase = async () => {
     try {
       await API.post("/api/panier/confirmer/");
       alert("Achat confirmé !");
-      setPanier(null);
+      setCart({ articles: [] });
     } catch (err) {
       console.error(err);
-      setError("Échec de la confirmation.");
+      setError("Erreur lors de la confirmation.");
     }
   };
 
   return (
-    <PanierUI
-      panier={panier}
+    <CartUI
+      cart={cart}
       loading={loading}
       error={error}
       onRemoveItem={handleRemoveItem}
-      onConfirmAchat={handleConfirmAchat}
+      onConfirmPurchase={handleConfirmPurchase}
     />
   );
 }
 
-export default Panier;
+export default Cart;
