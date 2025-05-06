@@ -1,5 +1,6 @@
-function ProductDetailUI({ annonce, loading }) {
+function ProductDetailUI({ annonce, loading, error }) {
     if (loading) return <p>Chargement des détails...</p>;
+    if (error) return <p style={{ color: 'red' }}>{error}</p>;
     if (!annonce) return <p>Annonce introuvable.</p>;
   
     return (
@@ -9,7 +10,9 @@ function ProductDetailUI({ annonce, loading }) {
         <p><strong>Prix :</strong> {annonce.prix} DT</p>
         <p><strong>Ville :</strong> {annonce.ville}</p>
         <p><strong>Gouvernorat :</strong> {annonce.gouvernorat}</p>
-        <p><strong>Catégorie :</strong> {annonce.sous_categorie}</p>
+        <p><strong>Catégorie :</strong> {annonce.sous_categorie?.nom}</p>
+        <p><strong>Vendeur :</strong> {annonce.user?.username}</p>
+        <p><strong>Téléphone :</strong> {annonce.user?.telephone}</p>
       </div>
     );
   }

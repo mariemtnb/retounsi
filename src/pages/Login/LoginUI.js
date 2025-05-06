@@ -4,20 +4,28 @@ function LoginUI({ formData, handleChange, handleSubmit, error }) {
         <h2>Connexion</h2>
         {error && <p style={{ color: 'red' }}>{error}</p>}
         <form onSubmit={handleSubmit}>
+          <label htmlFor="email">Email</label><br />
           <input
+            id="email"
             type="email"
             name="email"
-            placeholder="Email"
+            placeholder="Votre email"
             value={formData.email}
             onChange={handleChange}
-          /><br />
+            required
+          /><br /><br />
+  
+          <label htmlFor="password">Mot de passe</label><br />
           <input
+            id="password"
             type="password"
             name="password"
-            placeholder="Mot de passe"
+            placeholder="Votre mot de passe"
             value={formData.password}
             onChange={handleChange}
-          /><br />
+            required
+          /><br /><br />
+  
           <button type="submit">Se connecter</button>
         </form>
       </div>

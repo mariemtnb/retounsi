@@ -1,17 +1,17 @@
-import { useState } from "react";
-import AddAnnonceUI from "./AddAnnonceUI";
-import API from "../../services/api";
+import { useState } from 'react';
+import AddAnnonceUI from './AddAnnonceUI';
+import { createAnnonce } from '../../services/api';
 
 function AddAnnonce() {
   const [formData, setFormData] = useState({
-    titre: "",
-    description: "",
-    prix: "",
-    ville: "",
-    gouvernorat: "",
-    sous_categorie: "",     // ID d'une sous-catégorie existante
-    images_urls: [],        // Array de strings (URLs)
-    is_premium: false
+    titre: '',
+    description: '',
+    prix: '',
+    ville: '',
+    gouvernorat: '',
+    sous_categorie: '',
+    images_urls: [],
+    is_premium: false,
   });
 
   const [error, setError] = useState(null);
@@ -21,24 +21,41 @@ function AddAnnonce() {
     const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [name]: type === "checkbox" ? checked : value
+      [name]: type === 'checkbox' ? checked : value,
     });
   };
 
   const handleImageAdd = (url) => {
-    setFormData(prev => ({
-      ...prev,
-      images_urls: [...prev.images_urls, url]
-    }));
+    if (url.trim()) {
+      setFormData((prev) => ({
+        ...prev,
+        images_urls: [...prev.images_urls, url.trim()],
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await API.post("/annonce/ajouter/", formData);
-      setSuccessMsg("Annonce créée avec succès !");
+      const payload = {
+        ...formData,
+        sous_categorie: parseInt(formData.sous_categorie), // assure que c’est un entier
+        prix: parseFloat(formData.prix),
+      };
+      await createAnnonce(payload);
+      setSuccessMsg('Annonce créée avec succès !');
       setError(null);
-      // Redirection ou reset
+      // Réinitialise le formulaire
+      setFormData({
+        titre: '',
+        description: '',
+        prix: '',
+        ville: '',
+        gouvernorat: '',
+        sous_categorie: '',
+        images_urls: [],
+        is_premium: false,
+      });
     } catch (err) {
       console.error(err);
       setError("Erreur lors de la création de l'annonce.");
